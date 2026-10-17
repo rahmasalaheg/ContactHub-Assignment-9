@@ -1,64 +1,63 @@
+var contactModal = document.getElementById("contactModal");
+var contactName = document.getElementById("contactName");
+var contactPhone = document.getElementById("contactPhone");
+var contactEmail = document.getElementById("contactEmail");
+var contactAddress = document.getElementById("contactAddress");
+var contactGroup = document.getElementById("contactGroup");
+var contactNotes = document.getElementById("contactNotes");
+var avatarInput = document.getElementById("avatarInput");
+var contactId = document.getElementById("contactId");
+var totalContacts = document.getElementById("totalContacts");
+var searchInput = document.getElementById("searchInput");
+var avatarPreview = document.getElementById("avatarPreview");
+var totalContactsSpan = document.getElementById("totalContactsSpan");
 
-var contactModal = document.getElementById("contactModal")
-var contactName = document.getElementById("contactName")
-var contactPhone = document.getElementById("contactPhone")
-var contactEmail = document.getElementById("contactEmail")
-var contactAddress = document.getElementById("contactAddress")
-var contactGroup = document.getElementById("contactGroup")
-var contactNotes = document.getElementById("contactNotes")
-var avatarInput = document.getElementById("avatarInput")
-var contactId = document.getElementById("contactId")
-var totalContacts =document.getElementById("totalContacts")
-var searchInput =document.getElementById("searchInput")
-var avatarPreview =document.getElementById("avatarPreview")
-var totalContactsSpan =document.getElementById("totalContactsSpan")
+var contactList = [];
 
-var contactList = []
-
-if(localStorage.getItem("contactArray" !== null)){
-    contactList = JSON.parse(localStorage.getItem("contactArray"))
-    displayContact(contactList)
+if (localStorage.getItem("contactArray" !== null)) {
+  contactList = JSON.parse(localStorage.getItem("contactArray"));
+  displayContact(contactList);
 }
 
 function saveContact() {
-    var contact = {
-        name:contactName.value,
-        phone:contactPhone.value,
-        email:contactEmail.value,
-        address:contactAddress.value,
-        group:contactGroup.value,
-        notes:contactNotes.value,
-        image:`./img/${avatarInput.files[0].name}`
-    }
-    if(contactId.value !== ""){
-        var currentIndex = contactId.value
-        contactList[currentIndex] = contact
-    }else  {
-        contactList.push(contact)
-    }
-    localStorage.setItem("contactArray" , JSON.stringify(contactList))
-    displayContact(contactList)
-    contactModal.classList.add("d-none")
-    clearInputValues()
+  var contact = {
+    name: contactName.value,
+    phone: contactPhone.value,
+    email: contactEmail.value,
+    address: contactAddress.value,
+    group: contactGroup.value,
+    notes: contactNotes.value,
+    image: `./img/${avatarInput.files[0].name}`,
+  };
+  if (contactId.value !== "") {
+    var currentIndex = contactId.value;
+    contactList[currentIndex] = contact;
+  } else {
+    contactList.push(contact);
+  }
+  localStorage.setItem("contactArray", JSON.stringify(contactList));
+  displayContact(contactList);
+  contactModal.classList.add("d-none");
+  clearInputValues();
 }
 
-function clearInputValues(){
-    contactName.value = ""
-    contactPhone.value = ""
-    contactEmail.value = ""
-    contactAddress.value = ""
-    contactGroup.value = ""
-    contactNotes.value = ""
-    avatarInput.value = ""
-    avatarPreview.innerHTML = `<i class="fas fa-user"></i>`
+function clearInputValues() {
+  contactName.value = "";
+  contactPhone.value = "";
+  contactEmail.value = "";
+  contactAddress.value = "";
+  contactGroup.value = "";
+  contactNotes.value = "";
+  avatarInput.value = "";
+  avatarPreview.innerHTML = `<i class="fas fa-user"></i>`;
 }
 
-function displayContact(array){
-    totalContacts.innerHTML = `${array.length}`
-    totalContactsSpan.innerHTML = array.length
-    var cartona = ""
-    for(var i = 0; i < array.length; i++){
-        cartona += `
+function displayContact(array) {
+  totalContacts.innerHTML = `${array.length}`;
+  totalContactsSpan.innerHTML = array.length;
+  var cartona = "";
+  for (var i = 0; i < array.length; i++) {
+    cartona += `
             <div  class="col-md-6 col-lg-12 col-xl-6 mb-4">
                 <div class="contact-card">
                     <div class="contact-card-header">
@@ -144,80 +143,98 @@ function displayContact(array){
                             </div>
 
                         </div>
-        `
+        `;
+  }
+  document.getElementById("contactCardContainer").innerHTML = cartona;
+}
+
+function previewImage() {
+  if (avatarInput.files[0]) {
+    var fileName = avatarInput.files[0].name;
+    avatarPreview.innerHTML = `<img src="./img/${fileName}" class="w-100 h-100 object-fit-cover rounded-4">`;
+  }
+}
+
+function addContact() {
+  contactModal.classList.remove("d-none");
+}
+
+function closeModalBtn() {
+  contactModal.classList.add("d-none");
+}
+
+function cancelBtn() {
+  contactModal.classList.add("d-none");
+}
+
+function deletCotact(index) {
+  contactList.splice(index, 1);
+  localStorage.setItem("contactArray", JSON.stringify(contactList));
+  displayContact(contactList);
+}
+
+function getProductToUpdate(index) {
+  contactId.value = index;
+  contactName.value = contactList[index].name;
+  contactAddress.value = contactList[index].address;
+  contactEmail.value = contactList[index].email;
+  contactGroup.value = contactList[index].group;
+  contactPhone.value = contactList[index].phone;
+  contactNotes.value = contactList[index].notes;
+  contactModal.classList.remove("d-none");
+}
+
+function contactSearch() {
+  var searchValue = searchInput.value;
+  var searchArray = [];
+  for (var i = 0; i < contactList.length; i++) {
+    if (
+      contactList[i].name
+        .trim()
+        .toLowerCase()
+        .includes(searchValue.trim().toLowerCase()) ||
+      contactList[i].address
+        .trim()
+        .toLowerCase()
+        .includes(searchValue.trim().toLowerCase()) ||
+      contactList[i].email
+        .trim()
+        .toLowerCase()
+        .includes(searchValue.trim().toLowerCase()) ||
+      contactList[i].phone
+        .trim()
+        .toLowerCase()
+        .includes(searchValue.trim().toLowerCase()) ||
+      contactList[i].group
+        .trim()
+        .toLowerCase()
+        .includes(searchValue.trim().toLowerCase()) ||
+      contactList[i].notes
+        .trim()
+        .toLowerCase()
+        .includes(searchValue.trim().toLowerCase())
+    ) {
+      searchArray.push(contactList[i]);
     }
-    document.getElementById("contactCardContainer").innerHTML = cartona
+  }
+  displayContact(searchArray);
 }
 
-function previewImage(){
-    if(avatarInput.files[0]){
-      var fileName = avatarInput.files[0].name
-      avatarPreview.innerHTML = `<img src="./img/${fileName}" class="w-100 h-100 object-fit-cover rounded-4">`
-    }
-}
+function emergncyContact(index) {
+  var heartIcon = document.getElementById("heartIcon");
+  var bigEmergncy = document.getElementById("bigEmergencyItem");
+  var emergencyBadge = document.getElementById("emergencyBadge");
+  var icon = document.getElementById("emergncyIcon");
 
-function addContact(){
-    contactModal.classList.remove("d-none")
-}
+  if (icon.classList.contains("fa-heart")) {
+    icon.classList.remove("fa-heart");
+    icon.classList.add("fa-heart-pulse");
 
-function closeModalBtn(){
-    contactModal.classList.add("d-none")
-}
+    heartIcon.classList.remove("d-none");
 
-function cancelBtn(){
-    contactModal.classList.add("d-none")
-}
+    emergencyBadge.classList.remove("d-none");
 
-function deletCotact(index){
-    contactList.splice(index,1)
-    localStorage.setItem("contactArray",JSON.stringify(contactList))
-    displayContact(contactList)
-}
-
-function getProductToUpdate(index){
-    
-    contactId.value = index
-    contactName.value = contactList[index].name
-    contactAddress.value = contactList[index].address
-    contactEmail.value = contactList[index].email
-    contactGroup.value = contactList[index].group
-    contactPhone.value = contactList[index].phone
-    contactNotes.value = contactList[index].notes
-    contactModal.classList.remove("d-none")
-}
-
-function contactSearch(){
-    var searchValue =searchInput.value
-    var searchArray = []
-    for(var i=0; i < contactList.length; i++){
-        if(contactList[i].name.trim().toLowerCase().includes(searchValue.trim().toLowerCase()) ||
-        contactList[i].address.trim().toLowerCase().includes(searchValue.trim().toLowerCase())||
-        contactList[i].email.trim().toLowerCase().includes(searchValue.trim().toLowerCase())||
-        contactList[i].phone.trim().toLowerCase().includes(searchValue.trim().toLowerCase())||
-        contactList[i].group.trim().toLowerCase().includes(searchValue.trim().toLowerCase())||
-        contactList[i].notes.trim().toLowerCase().includes(searchValue.trim().toLowerCase())
-        ){
-        searchArray.push(contactList[i])
-        }
-    }
-    displayContact(searchArray)
-}
-
-function emergncyContact(index){
-  var heartIcon = document.getElementById("heartIcon")
-  var bigEmergncy = document.getElementById("bigEmergencyItem")
-  var emergencyBadge = document.getElementById("emergencyBadge")
-  var icon = document.getElementById("emergncyIcon")
-
-  if(icon.classList.contains("fa-heart")){
-    icon.classList.remove("fa-heart")
-    icon.classList.add("fa-heart-pulse")
-
-    heartIcon.classList.remove("d-none")
-
-    emergencyBadge.classList.remove("d-none")
-
-    bigEmergncy.innerHTML = ""
+    bigEmergncy.innerHTML = "";
 
     bigEmergncy.innerHTML += `
     <div class="col-12">
@@ -237,27 +254,21 @@ function emergncyContact(index){
     </div>
    </div>
       
-  `  
-  }else{
-    icon.classList.add("fa-heart")
-    icon.classList.remove("fa-heart-pulse")
+  `;
+  } else {
+    icon.classList.add("fa-heart");
+    icon.classList.remove("fa-heart-pulse");
 
-    heartIcon.classList.add("d-none")
+    heartIcon.classList.add("d-none");
 
-    emergencyBadge.classList.add("d-none")
-    bigEmergncy.innerHTML = ""
+    emergencyBadge.classList.add("d-none");
+    bigEmergncy.innerHTML = "";
     bigEmergncy.innerHTML += `      
               
         <div id="emptyStateEmergency" class="empty-state">
             <p class="text-muted mb-0">No emergency contacts</p>
         </div>
     
-    `
-    
-    
-
+    `;
   }
-
-  
-
 }
