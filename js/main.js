@@ -20,7 +20,7 @@ if(localStorage.getItem("contactArray" !== null)){
     displayContact(contactList)
 }
 
-function saveContact(){
+function saveContact() {
     var contact = {
         name:contactName.value,
         phone:contactPhone.value,
