@@ -14,7 +14,7 @@ var totalContactsSpan = document.getElementById("totalContactsSpan");
 
 var contactList = [];
 
-if (localStorage.getItem("contactArray" !== null)) {
+if (localStorage.getItem("contactArray") !== null) {
   contactList = JSON.parse(localStorage.getItem("contactArray"));
   displayContact(contactList);
 }
@@ -65,12 +65,12 @@ function displayContact(array) {
                             <div class="position-relative flex-shrink-0  ">
                                 <img src="${array[i].image}" alt="sssss"
                                     class="contact-card-avatar object-fit-cover">
-                                        <div id="heartIcon"
+                                        <div id="heartIcon${i}"
                                             class="badge-icon d-none badge-heart d-flex justify-content-center align-items-center rounded-circle">
                                             <i class="fas fa-heart-pulse"></i>
                                         </div>
-                                        <div
-                                            class="badge-icon badge-star d-flex justify-content-center align-items-center rounded-circle">
+                                        <div id="imgstar${i}"
+                                            class="badge-icon d-none badge-star d-flex justify-content-center align-items-center rounded-circle">
                                             <i class="fas fa-star"></i>
                                         </div>
                                         </div>
@@ -107,7 +107,7 @@ function displayContact(array) {
                                
                                     <div class="contact-tags d-flex align-items-center">
                                         <span class="contact-tag d-inline-flex align-items-center">${array[i].group}</span>
-                                        <span id="emergencyBadge" class="contact-tag  d-none text-danger align-items-center gap-2  px-2 py-1">
+                                        <span id="emergencyBadge${i}" class="contact-tag d-none text-danger align-items-center gap-2 px-2 py-1">
                                         <i class="fas fa-heart-pulse fa-s" ></i>
                                          Emergency
                                         </span>
@@ -126,11 +126,11 @@ function displayContact(array) {
                                         </a>
                                     </div>
                                     <div class="action-buttons-right">
-                                        <button class="action-button favorite" id="favBtn" title="Favorite">
-                                            <i class="far fa-star"></i>
+                                        <button onclick="favoritesContact(${i})"  class="action-button favorite" id="favBtn" title="Favorite">
+                                            <i id="favoritesIcon${i}" class="far fa-star"></i>
                                         </button>
-                                        <button onclick="emergncyContact(${i})" class="action-button emergency"id="emergncyBtn" title="Emergency">
-                                            <i id="emergncyIcon" class="far fa-heart"></i>
+                                        <button onclick="emergncyContact(${i})" class="action-button emergency" id="emergncyBtn${i}" title="Emergency">
+                                            <i id="emergncyIcon${i}" class="far fa-heart"></i>
                                         </button>
                                         <button onclick="getProductToUpdate(${i})" class="action-button edit" id="editBtn" title="Edit">
                                             <i class="fas fa-pen"></i>
@@ -221,24 +221,29 @@ function contactSearch() {
 }
 
 function emergncyContact(index) {
-  var heartIcon = document.getElementById("heartIcon");
-  var bigEmergncy = document.getElementById("bigEmergencyItem");
-  var emergencyBadge = document.getElementById("emergencyBadge");
-  var icon = document.getElementById("emergncyIcon");
+  var heartIcon = document.getElementById(`heartIcon${index}`)
+  var bigEmergncy = document.getElementById("bigEmergencyItem")
+  var emergencyBadge = document.getElementById(`emergencyBadge${index}`)
+  var icon = document.getElementById(`emergncyIcon${index}`)
+  var emergencyBtn = document.getElementById(`emergncyBtn${index}`)
+  var totalEmergencyContacts = document.getElementById(`totalEmergencyContacts`)
 
   if (icon.classList.contains("fa-heart")) {
     icon.classList.remove("fa-heart");
     icon.classList.add("fa-heart-pulse");
+    icon.classList.remove("far");
+    icon.classList.add("fas");
+    emergencyBtn.classList.add("is-active");
 
     heartIcon.classList.remove("d-none");
 
     emergencyBadge.classList.remove("d-none");
 
-    bigEmergncy.innerHTML = "";
+    document.getElementById("emptyStateEmergency").classList.add("d-none");
 
     bigEmergncy.innerHTML += `
     <div class="col-12">
-    <div id="smallEmergncyItem"
+    <div id="smallEmergncyItem${index}"
         class="contact-item-emergency d-flex align-items-center gap-3 p-2 rounded-3">
     <div class="flex-shrink-0">
         <img src="${contactList[index].image}" alt="sssss" class="contact-avatar" />
@@ -254,21 +259,107 @@ function emergncyContact(index) {
     </div>
    </div>
       
-  `;
+   `;
   } else {
     icon.classList.add("fa-heart");
     icon.classList.remove("fa-heart-pulse");
+    icon.classList.add("far");
+    icon.classList.remove("fas");
+    emergencyBtn.classList.remove("is-active");
 
     heartIcon.classList.add("d-none");
 
     emergencyBadge.classList.add("d-none");
     bigEmergncy.innerHTML = "";
-    bigEmergncy.innerHTML += `      
-              
+    bigEmergncy.innerHTML += `           
         <div id="emptyStateEmergency" class="empty-state">
             <p class="text-muted mb-0">No emergency contacts</p>
         </div>
     
     `;
   }
+
+  var counter = 0
+  for (var i = 0; i < contactList.length; i++) {
+    var icon = document.getElementById(`emergncyIcon${i}`)
+    if (icon && icon.classList.contains("fa-heart-pulse")) {
+      counter++;
+    }
+  }
+  totalEmergencyContacts.innerHTML = counter;
+}
+
+function favoritesContact(index) {
+  var favIcon = document.getElementById(`favoritesIcon${index}`);
+  var imgstar = document.getElementById(`imgstar${index}`);
+  var smallFavItem = document.getElementById(`smallFavItem${index}`);
+  var bigFavItem = document.getElementById("bigFavItem");
+  var totalFavContacts = document.getElementById("totalFavContacts");
+
+  if (favIcon.classList.contains("far")) {
+    //star Btn
+    favIcon.classList.remove("far");
+    favIcon.classList.add("fas");
+    //img icon
+    imgstar.classList.remove("d-none");
+
+   document.getElementById("emptyStateFav").classList.add("d-none")
+   
+    bigFavItem.innerHTML += `
+                    <div class="col-12">
+                    <div
+                      id="smallFavItem${index}"
+                      class="contact-item d-flex justify-content-between align-items-center gap-3 p-2 rounded-3 mb-3"
+                    >
+                      <div class="flex-shrink-0">
+                        <img
+                          src="${contactList[index].image}"
+                          alt="sssss"
+                          class="contact-avatar"
+                        />
+                      </div>
+                      <div class="flex-grow-1 text-truncate">
+                        <h4
+                          class="mb-0 fw-medium text-dark small text-truncate"
+                        >
+                         ${contactList[index].name}
+                        </h4>
+                        <p class="mb-0 text-muted small text-truncate">
+                          ${contactList[index].phone}
+                        </p>
+                      </div>
+                      <a
+                        href="tel:${contactList[index].phone}"
+                        class="call-btn d-flex align-items-center justify-content-center flex-shrink-0"
+                      >
+                        <i class="fas fa-phone"></i>
+                      </a>
+                    </div>
+                  </div>
+    `
+  } else {
+    //starBtn
+    favIcon.classList.add("far");
+    favIcon.classList.remove("fas");
+    //img icon
+    imgstar.classList.add("d-none");
+
+    bigFavItem.innerHTML = ""
+    bigFavItem.innerHTML += `
+     <div class="col-12">
+      <div id="emptyStateFav" class="empty-state">
+        <p class="text-muted mb-0">No favorites yet</p>
+      </div>
+      </div>
+    `
+  }
+
+  var counter = 0
+  for (var i = 0; i < contactList.length; i++) {
+    var favIcon = document.getElementById(`favoritesIcon${i}`)
+    if(favIcon && favIcon.classList.contains("fas")){
+      counter++
+    }
+  }
+  totalFavContacts.innerHTML = counter
 }

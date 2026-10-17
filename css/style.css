@@ -345,6 +345,10 @@ body {
   color: #9ca3af;
 }
 
+.action-button .fas.fa-star{
+  color: var(--amber-400);
+}
+
 .action-button.favorite:hover {
   background-color: var(--gray-100);
   color: var(--amber-400);
@@ -353,6 +357,11 @@ body {
 .action-button.emergency {
   background-color: #f9fafb;
   color: #9ca3af;
+}
+
+.action-button.emergency.is-active {
+  background-color: var(--rose-50);
+  color: var(--rose-500);
 }
 
 .action-button.emergency:hover {
