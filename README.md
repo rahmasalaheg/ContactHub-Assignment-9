@@ -90,7 +90,7 @@ This project demonstrates practical experience with:
 - Add profile pictures for contacts.
 - Sort contacts alphabetically.
 - Add dark mode.
-- Support contact groups and categories.
+- Support contact groups and categories..
 
 ---
 
