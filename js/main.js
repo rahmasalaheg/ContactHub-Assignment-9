@@ -20,6 +20,7 @@ if (localStorage.getItem("contactArray") !== null) {
 }
 
 function saveContact() {
+  var currentIndex = contactId.value;
   var contact = {
     name: contactName.value,
     phone: contactPhone.value,
@@ -30,10 +31,21 @@ function saveContact() {
     image: `./img/${avatarInput.files[0].name}`,
   };
   if (contactId.value !== "") {
-    var currentIndex = contactId.value;
     contactList[currentIndex] = contact;
+
+    Swal.fire({
+      title: "Updated!",
+      text: "Contact has been updated successfully.",
+      icon: "success",
+    });
   } else {
     contactList.push(contact);
+    Swal.fire({
+      title: "Added!",
+      text: "Contact has been added successfully.",
+      icon: "success",
+      timer: 2000,
+    });
   }
   localStorage.setItem("contactArray", JSON.stringify(contactList));
   displayContact(contactList);
@@ -50,14 +62,28 @@ function clearInputValues() {
   contactNotes.value = "";
   avatarInput.value = "";
   avatarPreview.innerHTML = `<i class="fas fa-user"></i>`;
+  contactName.classList.remove("is-valid")
 }
 
 function displayContact(array) {
   totalContacts.innerHTML = `${array.length}`;
   totalContactsSpan.innerHTML = array.length;
   var cartona = "";
-  for (var i = 0; i < array.length; i++) {
+  if (array.length === 0) {
     cartona += `
+    <div class="col-12 text-center py-5">
+      <div class="d-flex align-items-center justify-content-center mx-auto mb-4 bg-secondary-subtle
+        rounded-4" style="width: 80px; height: 80px;">
+        <i class="fas fa-address-book text-secondary fs-4"></i>
+      </div>
+      <p class="text-muted fw-semibold mb-1">No contacts found</p>
+      <p class="text-secondary small">
+        Click <strong>"Add Contact"</strong> to get started
+      </p>
+    </div>`;
+  } else {
+    for (var i = 0; i < array.length; i++) {
+      cartona += `
             <div  class="col-md-6 col-lg-12 col-xl-6 mb-4">
                 <div class="contact-card">
                     <div class="contact-card-header">
@@ -144,6 +170,7 @@ function displayContact(array) {
 
                         </div>
         `;
+    }
   }
   document.getElementById("contactCardContainer").innerHTML = cartona;
 }
@@ -168,9 +195,27 @@ function cancelBtn() {
 }
 
 function deletCotact(index) {
-  contactList.splice(index, 1);
-  localStorage.setItem("contactArray", JSON.stringify(contactList));
-  displayContact(contactList);
+  Swal.fire({
+    title: "Delete Contact?",
+    text: `Are you sure you want to delete ${contactList[index].name} ? This action cannot be undone.`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#6b7280",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      contactList.splice(index, 1);
+      localStorage.setItem("contactArray", JSON.stringify(contactList));
+      displayContact(contactList);
+
+      Swal.fire({
+        title: "Deleted!",
+        text: "Your contact has been deleted.",
+        icon: "success",
+      });
+    }
+  });
 }
 
 function getProductToUpdate(index) {
@@ -221,12 +266,14 @@ function contactSearch() {
 }
 
 function emergncyContact(index) {
-  var heartIcon = document.getElementById(`heartIcon${index}`)
-  var bigEmergncy = document.getElementById("bigEmergencyItem")
-  var emergencyBadge = document.getElementById(`emergencyBadge${index}`)
-  var icon = document.getElementById(`emergncyIcon${index}`)
-  var emergencyBtn = document.getElementById(`emergncyBtn${index}`)
-  var totalEmergencyContacts = document.getElementById(`totalEmergencyContacts`)
+  var heartIcon = document.getElementById(`heartIcon${index}`);
+  var bigEmergncy = document.getElementById("bigEmergencyItem");
+  var emergencyBadge = document.getElementById(`emergencyBadge${index}`);
+  var icon = document.getElementById(`emergncyIcon${index}`);
+  var emergencyBtn = document.getElementById(`emergncyBtn${index}`);
+  var totalEmergencyContacts = document.getElementById(
+    `totalEmergencyContacts`,
+  );
 
   if (icon.classList.contains("fa-heart")) {
     icon.classList.remove("fa-heart");
@@ -279,9 +326,9 @@ function emergncyContact(index) {
     `;
   }
 
-  var counter = 0
+  var counter = 0;
   for (var i = 0; i < contactList.length; i++) {
-    var icon = document.getElementById(`emergncyIcon${i}`)
+    var icon = document.getElementById(`emergncyIcon${i}`);
     if (icon && icon.classList.contains("fa-heart-pulse")) {
       counter++;
     }
@@ -303,8 +350,8 @@ function favoritesContact(index) {
     //img icon
     imgstar.classList.remove("d-none");
 
-   document.getElementById("emptyStateFav").classList.add("d-none")
-   
+    document.getElementById("emptyStateFav").classList.add("d-none");
+
     bigFavItem.innerHTML += `
                     <div class="col-12">
                     <div
@@ -336,7 +383,7 @@ function favoritesContact(index) {
                       </a>
                     </div>
                   </div>
-    `
+    `;
   } else {
     //starBtn
     favIcon.classList.add("far");
@@ -344,22 +391,36 @@ function favoritesContact(index) {
     //img icon
     imgstar.classList.add("d-none");
 
-    bigFavItem.innerHTML = ""
+    bigFavItem.innerHTML = "";
     bigFavItem.innerHTML += `
      <div class="col-12">
       <div id="emptyStateFav" class="empty-state">
         <p class="text-muted mb-0">No favorites yet</p>
       </div>
       </div>
-    `
+    `;
   }
 
-  var counter = 0
+  var counter = 0;
   for (var i = 0; i < contactList.length; i++) {
-    var favIcon = document.getElementById(`favoritesIcon${i}`)
-    if(favIcon && favIcon.classList.contains("fas")){
-      counter++
+    var favIcon = document.getElementById(`favoritesIcon${i}`);
+    if (favIcon && favIcon.classList.contains("fas")) {
+      counter++;
     }
   }
-  totalFavContacts.innerHTML = counter
+  totalFavContacts.innerHTML = counter;
+}
+
+function validateContactName() {
+  var contactNameError = document.getElementById("contactNameError")
+  var contactNameRegex = /^[A-Za-z]{2,50}$/
+  if(contactNameRegex.test(contactName.value)){
+    contactName.classList.add("is-valid")
+    contactName.classList.remove("is-invalid")
+    contactNameError.classList.add("d-none")
+  }else{
+    contactName.classList.remove("is-valid")
+    contactName.classList.add("is-invalid")
+    contactNameError.classList.remove("d-none")
+  }
 }
