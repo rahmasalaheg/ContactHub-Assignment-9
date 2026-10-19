@@ -20,37 +20,63 @@ if (localStorage.getItem("contactArray") !== null) {
 }
 
 function saveContact() {
-  var currentIndex = contactId.value;
-  var contact = {
-    name: contactName.value,
-    phone: contactPhone.value,
-    email: contactEmail.value,
-    address: contactAddress.value,
-    group: contactGroup.value,
-    notes: contactNotes.value,
-    image: `./img/${avatarInput.files[0].name}`,
-  };
-  if (contactId.value !== "") {
-    contactList[currentIndex] = contact;
 
-    Swal.fire({
-      title: "Updated!",
-      text: "Contact has been updated successfully.",
-      icon: "success",
-    });
-  } else {
-    contactList.push(contact);
-    Swal.fire({
-      title: "Added!",
-      text: "Contact has been added successfully.",
-      icon: "success",
-      timer: 2000,
-    });
+  if(!validateContactName()){
+     Swal.fire({
+        title: "Missing Name",
+        text: "Please enter a name for the contact!",
+        icon: "error",
+        customClass: {
+          container:'swal-container'
+        }
+      });
+      return
   }
-  localStorage.setItem("contactArray", JSON.stringify(contactList));
-  displayContact(contactList);
-  contactModal.classList.add("d-none");
-  clearInputValues();
+
+  if(!validateContactPhone()){
+     Swal.fire({
+        title: "Missing Phone",
+        text: "Please enter a phone number!",
+        icon: "error",
+        customClass: {
+          container:'swal-container'
+        }
+      });
+      return
+  }
+ 
+    var currentIndex = contactId.value;
+    var contact = {
+      name: contactName.value,
+      phone: contactPhone.value,
+      email: contactEmail.value,
+      address: contactAddress.value,
+      group: contactGroup.value,
+      notes: contactNotes.value,
+      image: `./img/${avatarInput.files[0].name}`,
+    };
+    if (contactId.value !== "") {
+      contactList[currentIndex] = contact;
+
+      Swal.fire({
+        title: "Updated!",
+        text: "Contact has been updated successfully.",
+        icon: "success",
+      });
+    } else {
+      contactList.push(contact);
+      Swal.fire({
+        title: "Added!",
+        text: "Contact has been added successfully.",
+        icon: "success",
+        timer: 2000,
+      });
+    }
+    localStorage.setItem("contactArray", JSON.stringify(contactList));
+    displayContact(contactList);
+    contactModal.classList.add("d-none");
+    clearInputValues();
+  
 }
 
 function clearInputValues() {
@@ -62,7 +88,12 @@ function clearInputValues() {
   contactNotes.value = "";
   avatarInput.value = "";
   avatarPreview.innerHTML = `<i class="fas fa-user"></i>`;
-  contactName.classList.remove("is-valid")
+  contactName.classList.remove("is-valid");
+  contactName.classList.remove("is-invalid");
+  contactPhone.classList.remove("is-valid");
+  contactPhone.classList.remove("is-invalid");
+  contactEmail.classList.remove("is-valid");
+  contactEmail.classList.remove("is-invalid");
 }
 
 function displayContact(array) {
@@ -412,15 +443,49 @@ function favoritesContact(index) {
 }
 
 function validateContactName() {
-  var contactNameError = document.getElementById("contactNameError")
-  var contactNameRegex = /^[A-Za-z]{2,50}$/
-  if(contactNameRegex.test(contactName.value)){
-    contactName.classList.add("is-valid")
-    contactName.classList.remove("is-invalid")
-    contactNameError.classList.add("d-none")
-  }else{
-    contactName.classList.remove("is-valid")
-    contactName.classList.add("is-invalid")
-    contactNameError.classList.remove("d-none")
+  var contactNameError = document.getElementById("contactNameError");
+  var contactNameRegex = /^[A-Za-z]{2,50}$/;
+  if (contactNameRegex.test(contactName.value)) {
+    contactName.classList.add("is-valid");
+    contactName.classList.remove("is-invalid");
+    contactNameError.classList.add("d-none");
+    return true;
+  } else {
+    contactName.classList.remove("is-valid");
+    contactName.classList.add("is-invalid");
+    contactNameError.classList.remove("d-none");
+    return false;
+  }
+}
+
+function validateContactPhone() {
+  var contactPhoneError = document.getElementById("contactPhoneError");
+  var contactPhoneRegex = /^01[0125][0-9]{8}$/;
+  if (contactPhoneRegex.test(contactPhone.value)) {
+    contactPhone.classList.add("is-valid");
+    contactPhone.classList.remove("is-invalid");
+    contactPhoneError.classList.add("d-none");
+    return true;
+  } else {
+    contactPhone.classList.remove("is-valid");
+    contactPhone.classList.add("is-invalid");
+    contactPhoneError.classList.remove("d-none");
+    return false;
+  }
+}
+
+function validateContactEmail() {
+  var contactEmailError = document.getElementById("contactEmailError");
+  var contactEmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}]$/;
+  if (contactEmailRegex.test(contactEmail.value)) {
+    contactEmail.classList.add("is-valid");
+    contactEmail.classList.remove("is-invalid");
+    contactEmailError.classList.add("d-none");
+    return true;
+  } else {
+    contactEmail.classList.remove("is-valid");
+    contactEmail.classList.add("is-invalid");
+    contactEmailError.classList.remove("d-none");
+    return false;
   }
 }
