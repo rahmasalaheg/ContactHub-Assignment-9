@@ -20,63 +20,61 @@ if (localStorage.getItem("contactArray") !== null) {
 }
 
 function saveContact() {
-
-  if(!validateContactName()){
-     Swal.fire({
-        title: "Missing Name",
-        text: "Please enter a name for the contact!",
-        icon: "error",
-        customClass: {
-          container:'swal-container'
-        }
-      });
-      return
+  if (!validateContactName()) {
+    Swal.fire({
+      title: "Missing Name",
+      text: "Please enter a name for the contact!",
+      icon: "error",
+      customClass: {
+        container: "swal-container",
+      },
+    });
+    return;
   }
 
-  if(!validateContactPhone()){
-     Swal.fire({
-        title: "Missing Phone",
-        text: "Please enter a phone number!",
-        icon: "error",
-        customClass: {
-          container:'swal-container'
-        }
-      });
-      return
+  if (!validateContactPhone()) {
+    Swal.fire({
+      title: "Missing Phone",
+      text: "Please enter a phone number!",
+      icon: "error",
+      customClass: {
+        container: "swal-container",
+      },
+    });
+    return;
   }
- 
-    var currentIndex = contactId.value;
-    var contact = {
-      name: contactName.value,
-      phone: contactPhone.value,
-      email: contactEmail.value,
-      address: contactAddress.value,
-      group: contactGroup.value,
-      notes: contactNotes.value,
-      image: `./img/${avatarInput.files[0].name}`,
-    };
-    if (contactId.value !== "") {
-      contactList[currentIndex] = contact;
 
-      Swal.fire({
-        title: "Updated!",
-        text: "Contact has been updated successfully.",
-        icon: "success",
-      });
-    } else {
-      contactList.push(contact);
-      Swal.fire({
-        title: "Added!",
-        text: "Contact has been added successfully.",
-        icon: "success",
-        timer: 2000,
-      });
-    }
-    localStorage.setItem("contactArray", JSON.stringify(contactList));
-    displayContact(contactList);
-    contactModal.classList.add("d-none");
-    clearInputValues();
-  
+  var currentIndex = contactId.value;
+  var contact = {
+    name: contactName.value,
+    phone: contactPhone.value,
+    email: contactEmail.value,
+    address: contactAddress.value,
+    group: contactGroup.value,
+    notes: contactNotes.value,
+    image: `./img/${avatarInput.files[0].name}`,
+  };
+  if (contactId.value !== "") {
+    contactList[currentIndex] = contact;
+
+    Swal.fire({
+      title: "Updated!",
+      text: "Contact has been updated successfully.",
+      icon: "success",
+    });
+  } else {
+    contactList.push(contact);
+    Swal.fire({
+      title: "Added!",
+      text: "Contact has been added successfully.",
+      icon: "success",
+      timer: 2000,
+    });
+  }
+  localStorage.setItem("contactArray", JSON.stringify(contactList));
+  displayContact(contactList);
+  contactModal.classList.add("d-none");
+  clearInputValues();
 }
 
 function clearInputValues() {
