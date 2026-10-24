@@ -11,6 +11,7 @@ var totalContacts = document.getElementById("totalContacts");
 var searchInput = document.getElementById("searchInput");
 var avatarPreview = document.getElementById("avatarPreview");
 var totalContactsSpan = document.getElementById("totalContactsSpan");
+var contactEmergency = document.getElementById("contactEmergency");
 
 var contactList = [];
 
@@ -52,7 +53,8 @@ function saveContact() {
     address: contactAddress.value,
     group: contactGroup.value,
     notes: contactNotes.value,
-    image: `./img/${avatarInput.files[0].name}`,
+    image: avatarInput.files[0] ? `./img/${avatarInput.files[0].name}` : `./img/istockphoto.jpg`,
+    isEmergecy: contactEmergency.checked,
   };
   if (contactId.value !== "") {
     contactList[currentIndex] = contact;
@@ -199,9 +201,10 @@ function displayContact(array) {
 
                         </div>
         `;
-    }
+    } 
   }
   document.getElementById("contactCardContainer").innerHTML = cartona;
+
 }
 
 function previewImage() {
@@ -294,6 +297,63 @@ function contactSearch() {
   displayContact(searchArray);
 }
 
+/*function updateEmergnyUI() {
+  var counter = 0;
+  var bigEmergncy = document.getElementById("bigEmergencyItem");
+
+  if (bigEmergncy) bigEmergncy.innerHTML = "";
+
+  for (var i = 0; i < contactList.length; i++) {
+    if (contactList[i].isEmergecy) {
+      counter++;
+      if (bigEmergncy) {
+        var emptyState = document.getElementById("emptyStateEmergency");
+
+
+        if (emptyState) emptyState.classList.add("d-none");
+
+        bigEmergncy.innerHTML += `
+         <div class="col-12">
+          <div id="smallEmergncyItem${index}"
+          class="contact-item-emergency d-flex align-items-center gap-3 p-2 rounded-3">
+          <div class="flex-shrink-0">
+          <img src="${contactList[index].image}" alt="sssss" class="contact-avatar" />
+         </div>
+          <div class="flex-grow-1 text-truncate">
+         <h4 class="mb-0 fw-medium text-dark small text-truncate">${contactList[index].name}</h4>
+         <p class="mb-0 text-muted small text-truncate">${contactList[index].phone}</p>
+         </div>
+         <a href="tel:${contactList[index].phone}"
+         class="call-btn-emergency call-btn-rose d-flex align-items-center justify-content-center flex-shrink-0">
+         <i class="fas fa-phone"></i>
+         </a>
+         </div>
+         </div>
+        `;
+      }
+    }
+  }
+  if (counter === 0 && bigEmergncy) {
+    var emptyState = document.getElementById("emptyStateEmergency");
+
+    
+
+    if (emptyState) emptyState.classList.remove("d-none");
+    bigEmergncy.innerHTML += `
+    <div id="emptyStateEmergency" class="empty-state">
+      <p class="text-muted mb-0">No emergency contacts</p>
+    </div>
+   `;
+  }
+
+  var totalEmergencyContacts = document.getElementById(
+    "totalEmergencyContacts",
+  );
+  if (totalEmergencyContacts) {
+    totalEmergencyContacts.innerHTML = counter;
+  }
+}*/
+
 function emergncyContact(index) {
   var heartIcon = document.getElementById(`heartIcon${index}`);
   var bigEmergncy = document.getElementById("bigEmergencyItem");
@@ -349,7 +409,7 @@ function emergncyContact(index) {
     bigEmergncy.innerHTML = "";
     bigEmergncy.innerHTML += `           
         <div id="emptyStateEmergency" class="empty-state">
-            <p class="text-muted mb-0">No emergency contacts</p>
+          <p class="text-muted mb-0">No emergency contacts</p>
         </div>
     
     `;
